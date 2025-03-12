@@ -9,11 +9,18 @@
             "use_local_files": true
         },
         {
-            "name": "TaM ",
+            "name": "Montpellier TaM",
             "use_local_files": false,
             "trip_update_url": "https://data.montpellier3m.fr/TAM_MMM_GTFSRT/TripUpdate.pb",
             "vehicle_position_url": "https://data.montpellier3m.fr/TAM_MMM_GTFSRT/VehiclePosition.pb",
             "alert_url": "https://data.montpellier3m.fr/TAM_MMM_GTFSRT/Alert.pb"
+        },
+        {
+            "name": "Bordeaux TBM",
+            "use_local_files": false,
+            "trip_update_url": "https://bdx.mecatran.com/utw/ws/gtfsfeed/realtime/bordeaux?apiKey=opendata-bordeaux-metropole-flux-gtfs-rt",
+            "vehicle_position_url": "https://bdx.mecatran.com/utw/ws/gtfsfeed/vehicles/bordeaux?apiKey=opendata-bordeaux-metropole-flux-gtfs-rt",
+            "alert_url": "https://bdx.mecatran.com/utw/ws/gtfsfeed/alerts/bordeaux?apiKey=opendata-bordeaux-metropole-flux-gtfs-rt"
         }
     ],
     "current_source": 1
