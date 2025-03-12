@@ -7,14 +7,7 @@
             "vehicle_position_url": "",
             "alert_url": "",
             "use_local_files": true
-        },
-        {
-            "name": "TaM ",
-            "use_local_files": false,
-            "trip_update_url": "https://data.montpellier3m.fr/TAM_MMM_GTFSRT/TripUpdate.pb",
-            "vehicle_position_url": "https://data.montpellier3m.fr/TAM_MMM_GTFSRT/VehiclePosition.pb",
-            "alert_url": "https://data.montpellier3m.fr/TAM_MMM_GTFSRT/Alert.pb"
         }
     ],
-    "current_source": 1
+    "current_source": 0
 }

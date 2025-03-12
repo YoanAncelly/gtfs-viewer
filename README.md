@@ -1,16 +1,33 @@
-# GTFS-RT Reader
+# GTFS-RT Viewer
 
-Ce script Python permet de lire et d'interpréter des fichiers au format GTFS-RT (General Transit Feed Specification - Real Time) avec l'extension .pb.
+Une application web pour visualiser, analyser et explorer les données GTFS-RT (General Transit Feed Specification - Real Time) à partir de fichiers .pb ou d'URLs en direct.
+
+## Fonctionnalités
+
+- Lecture et analyse de fichiers GTFS-RT (.pb)
+- Support pour les trois types de flux GTFS-RT :
+  - Mises à jour des trajets (Trip Updates)
+  - Positions des véhicules (Vehicle Positions)
+  - Alertes (Alerts)
+- Visualisation interactive avec tableau de bord
+- Affichage des positions des véhicules sur une carte
+- Analyse statistique des retards
+- Export des données au format CSV
+- Configuration de sources multiples (fichiers locaux ou URLs)
+- Interface utilisateur responsive et moderne
 
 ## Prérequis
 
-Pour exécuter ce script, vous aurez besoin de Python 3.6+ et des bibliothèques suivantes :
+Pour exécuter cette application, vous aurez besoin de Python 3.6+ et des bibliothèques suivantes :
 
-```
+```bash
 gtfs-realtime-bindings>=1.0.0
 protobuf>=3.20.0
 pandas>=1.3.0
 matplotlib>=3.5.0
+flask>=2.0.0
+flask-cors>=3.0.10
+requests>=2.28.0
 ```
 
 Vous pouvez installer ces dépendances en utilisant le fichier `requirements.txt` :
@@ -19,45 +36,67 @@ Vous pouvez installer ces dépendances en utilisant le fichier `requirements.txt
 pip install -r requirements.txt
 ```
 
-## Utilisation
+## Installation
 
-Le script est configuré pour lire trois types de fichiers GTFS-RT :
-- `TripUpdate.pb` : Mises à jour des trajets (retards, annulations, etc.)
-- `VehiclePosition.pb` : Positions des véhicules en temps réel
-- `Alert.pb` : Alertes et notifications
+1. Clonez ce dépôt :
 
-Pour exécuter le script :
+   ```bash
+   git clone https://github.com/your-username/gtfs-viewer.git
+   cd gtfs-viewer
+   ```
 
-```bash
-python gtfs_rt_reader.py
+2. Installez les dépendances :
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Lancez l'application :
+
+   ```bash
+   python main.py
+   ```
+
+4. Ouvrez votre navigateur à l'adresse `http://localhost:5000`
+
+## Structure du Projet
+
+Le projet suit une structure organisée par fonctionnalité :
+
+```markdown
+gtfs-viewer/
+├── app/                      # Code de l'application
+│   ├── api/                  # Points d'entrée API
+│   ├── core/                 # Fonctionnalités principales
+│   ├── utils/                # Utilitaires
+│   └── web/                  # Interface web
+├── config/                   # Configuration
+├── data/                     # Données
+│   ├── gtfs/                 # Données GTFS statiques
+│   └── gtfs_rt/              # Fichiers GTFS-RT
+├── docs/                     # Documentation
+├── output/                   # Fichiers générés
+│   ├── charts/               # Graphiques
+│   └── csv/                  # Exports CSV
+├── static/                   # Ressources statiques
+├── templates/                # Templates HTML
+└── tests/                    # Tests
 ```
 
-## Fonctionnalités
+Consultez le fichier `docs/DEVBOOK.md` pour plus de détails sur la structure et l'organisation du projet.
 
-Le script effectue les opérations suivantes :
+## Développement
 
-1. Lecture des fichiers GTFS-RT (.pb)
-2. Affichage des informations de base sur chaque flux
-3. Analyse des mises à jour de trajets (retards moyens, distribution des retards)
-4. Analyse des positions des véhicules (vitesse moyenne, positions géographiques)
-5. Analyse des alertes (cause, effet, entités concernées)
-6. Génération de graphiques (distribution des retards, positions des véhicules)
-7. Export des données au format CSV
+Pour contribuer au projet, veuillez consulter le fichier `docs/DEVBOOK.md` qui contient les lignes directrices de développement et le journal des activités.
 
-## Résultats
+## Tests
 
-Le script génère les fichiers suivants :
-- `trip_updates.csv` : Données sur les mises à jour des trajets
-- `vehicle_positions.csv` : Données sur les positions des véhicules
-- `delay_distribution.png` : Graphique de la distribution des retards
-- `vehicle_positions.png` : Carte des positions des véhicules
+Exécutez les tests avec pytest :
 
-## Structure du code
+```bash
+python -m pytest tests/
+```
 
-- `read_gtfs_rt_file()` : Lit un fichier GTFS-RT et renvoie le message d'alimentation analysé
-- `convert_to_dict()` : Convertit un message GTFS-RT en dictionnaire Python
-- `print_feed_info()` : Affiche les informations de base sur le flux
-- `analyze_trip_updates()` : Analyse les mises à jour des trajets
-- `analyze_vehicle_positions()` : Analyse les positions des véhicules
-- `analyze_alerts()` : Analyse les alertes
-- `main()` : Fonction principale qui orchestre l'exécution du script
+## Licence
+
+[À définir selon vos besoins]

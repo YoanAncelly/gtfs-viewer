@@ -6,6 +6,102 @@ This document serves as a development journal and reference for developers and A
 
 GTFS-RT Viewer is a tool for processing, analyzing, and visualizing General Transit Feed Specification - Real Time (GTFS-RT) data. The application reads protobuf (.pb) files containing trip updates, vehicle positions, and alerts, providing insights through data processing and visualization.
 
+## Project Structure
+
+The GTFS-RT Viewer project follows this directory structure:
+
+```bash
+gtfs-viewer/
+├── app/                      # Application code
+│   ├── __init__.py           # Package initializer
+│   ├── api/                  # API endpoints
+│   │   ├── __init__.py
+│   │   ├── config_routes.py  # Configuration API routes
+│   │   └── data_routes.py    # Data API routes
+│   ├── core/                 # Core functionality
+│   │   ├── __init__.py
+│   │   ├── gtfs_rt_reader.py # GTFS-RT processing
+│   │   └── visualizations.py # Data visualization functions
+│   ├── utils/                # Utility functions
+│   │   ├── __init__.py
+│   │   └── config_manager.py # Configuration management
+│   └── web/                  # Web interface
+│       ├── __init__.py
+│       └── routes.py         # Web routes
+├── config/                   # Configuration files
+│   └── config.json           # Main config file
+├── data/                     # Data files
+│   ├── gtfs/                 # GTFS static data
+│   │   ├── agency.csv
+│   │   ├── routes.csv
+│   │   └── ...
+│   └── gtfs_rt/              # GTFS-RT files
+│       ├── TripUpdate.pb
+│       ├── VehiclePosition.pb
+│       └── Alert.pb
+├── docs/                     # Documentation
+│   ├── DEVBOOK.md            # Development guide
+│   └── ROADMAP.md            # Project roadmap
+├── output/                   # Generated files
+│   ├── csv/                  # CSV exports
+│   │   ├── trip_updates.csv
+│   │   └── vehicle_positions.csv
+│   └── charts/               # Generated charts
+│       ├── delay_distribution.png
+│       └── vehicle_positions.png
+├── static/                   # Static web assets
+│   ├── css/                  # CSS styles
+│   │   └── styles.css
+│   ├── js/                   # JavaScript files
+│   │   ├── config.js         # Configuration UI
+│   │   └── main.js           # Main UI code
+│   └── img/                  # Static images
+├── templates/                # HTML templates
+│   ├── index.html            # Main UI template
+│   └── config.html           # Config UI template
+├── tests/                    # Test files
+│   ├── __init__.py
+│   ├── test_gtfs_rt_reader.py
+│   └── test_api.py
+├── .gitignore                # Git ignore file
+├── README.md                 # Project overview
+├── requirements.txt          # Python dependencies
+└── main.py                   # Application entry point
+```
+
+This structure organizes the codebase by functionality, separating core data processing from web presentation, and keeping configuration and data files in their dedicated directories.
+
+## Organisation des Fichiers
+
+Les fichiers du projet suivent ces conventions d'organisation :
+
+### Fichiers de données
+
+- **Fichiers GTFS statiques (.csv)** : `data/gtfs/`
+  - agency.csv, routes.csv, stops.csv, etc.
+  
+- **Fichiers GTFS-RT (.pb)** : `data/gtfs_rt/`
+  - TripUpdate.pb, VehiclePosition.pb, Alert.pb
+
+### Fichiers générés
+
+- **Exports CSV** : `output/csv/`
+  - trip_updates.csv, vehicle_positions.csv
+  
+- **Graphiques et visualisations** : `output/charts/`
+  - delay_distribution.png, vehicle_positions.png
+
+### Fichiers temporaires
+
+- **Fichiers de travail temporaires** : `temp/`
+  - Tous les fichiers .new (sauvegardes automatiques)
+  - Fichiers intermédiaires qui ne sont pas versionnés
+
+### Configuration
+
+- **Fichiers de configuration** : `config/`
+  - config.json : paramètres principaux de l'application
+
 ## Development Guidelines
 
 ### Code Style
@@ -31,7 +127,7 @@ GTFS-RT Viewer is a tool for processing, analyzing, and visualizing General Tran
 - Run tests locally before committing
 - Ensure tests are fast and deterministic
 
-### Documentation
+### Project Documentation
 
 - Update README.md for user-facing changes
 - Document API changes in code and in separate documentation
@@ -41,11 +137,13 @@ GTFS-RT Viewer is a tool for processing, analyzing, and visualizing General Tran
 ## Development Log
 
 ### 2025-03-12
+
 - Created ROADMAP.md and DEVBOOK.md in the docs directory
 - Established initial project structure and documentation
 - Defined short, mid, and long-term goals in the roadmap
 
 ### Previous Progress
+
 - Implemented basic GTFS-RT file reading functionality
 - Added analysis for trip updates, vehicle positions, and alerts
 - Created CSV export capability
@@ -54,11 +152,13 @@ GTFS-RT Viewer is a tool for processing, analyzing, and visualizing General Tran
 ## Current Sprint (2025-Q1)
 
 ### In Progress
+
 - Documentation expansion
 - Planning for web-based dashboard implementation
 - Researching interactive mapping libraries
 
 ### Backlog
+
 - Optimize data loading for large files
 - Implement caching for repeated analyses
 - Add direct feed URL support
@@ -76,6 +176,7 @@ GTFS-RT Viewer is a tool for processing, analyzing, and visualizing General Tran
 ### AI Agent Log
 
 #### 2025-03-12
+
 - Created initial project documentation structure
 - Set up ROADMAP.md with prioritized improvements
 - Established DEVBOOK.md for development tracking

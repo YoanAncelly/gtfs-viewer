@@ -19,7 +19,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 CORS(app)
 
 # Configuration file path
-CONFIG_FILE = 'config.json'
+CONFIG_FILE = 'config/config.json'
 
 # Default configuration
 DEFAULT_CONFIG = {
