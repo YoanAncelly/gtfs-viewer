@@ -40,6 +40,16 @@ output/csv/*.csv
 temp/
 *.new
 
+# GTFS-RT files in root directory (should be in data/gtfs_rt)
+/Alert.pb
+/TripUpdate.pb
+/VehiclePosition.pb
+
+# GTFS-RT data files
+data/gtfs_rt/*.pb
+
+static/delay_chart.png
+
 # OS specific
 .DS_Store
 .Trash

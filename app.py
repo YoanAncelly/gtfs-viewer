@@ -80,20 +80,24 @@ def get_gtfs_rt_feed(feed_type):
     config = load_config()
     current_source = config['sources'][config['current_source']]
     
+    # Define GTFS-RT directory and file paths
+    GTFS_RT_DIR = 'data/gtfs_rt'
+    os.makedirs(GTFS_RT_DIR, exist_ok=True)
+    
     file_map = {
-        'trip_update': 'TripUpdate.pb',
-        'vehicle_position': 'VehiclePosition.pb',
-        'alert': 'Alert.pb'
+        'trip_update': os.path.join(GTFS_RT_DIR, 'TripUpdate.pb'),
+        'vehicle_position': os.path.join(GTFS_RT_DIR, 'VehiclePosition.pb'),
+        'alert': os.path.join(GTFS_RT_DIR, 'Alert.pb')
     }
     
     if not current_source['use_local_files']:
         # Download the file from URL
         url_key = f"{feed_type}_url"
         if url_key in current_source and current_source[url_key]:
-            file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_map[feed_type])
+            file_path = file_map[feed_type]
             download_gtfs_rt_from_url(current_source[url_key], file_path)
     
-    return read_gtfs_rt_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), file_map[feed_type]))
+    return read_gtfs_rt_file(file_map[feed_type])
 
 # Function to read GTFS-RT files
 def read_gtfs_rt_file(file_path):
@@ -522,7 +526,7 @@ def api_refresh_data():
             for feed_type in ['trip_update', 'vehicle_position', 'alert']:
                 url_key = f"{feed_type}_url"
                 if url_key in current_source and current_source[url_key]:
-                    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{feed_type.title().replace('_', '')}.pb")
+                    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"data/gtfs_rt/{feed_type.title().replace('_', '')}.pb")
                     success = download_gtfs_rt_from_url(current_source[url_key], file_path)
                     results[feed_type] = {'success': success}
         
@@ -533,7 +537,7 @@ def api_refresh_data():
 @app.route('/api/trip-updates')
 def api_trip_updates():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    trip_update_path = os.path.join(current_dir, 'TripUpdate.pb')
+    trip_update_path = os.path.join(current_dir, 'data/gtfs_rt', 'TripUpdate.pb')
     
     if not os.path.exists(trip_update_path):
         return jsonify({'error': 'Trip update data not found'}), 404
@@ -557,7 +561,7 @@ def api_trip_updates():
 @app.route('/api/vehicle-positions')
 def api_vehicle_positions():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    vehicle_position_path = os.path.join(current_dir, 'VehiclePosition.pb')
+    vehicle_position_path = os.path.join(current_dir, 'data/gtfs_rt', 'VehiclePosition.pb')
     
     if not os.path.exists(vehicle_position_path):
         return jsonify({'error': 'Vehicle position data not found'}), 404
@@ -581,7 +585,7 @@ def api_vehicle_positions():
 @app.route('/api/alerts')
 def api_alerts():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    alert_path = os.path.join(current_dir, 'Alert.pb')
+    alert_path = os.path.join(current_dir, 'data/gtfs_rt', 'Alert.pb')
     
     if not os.path.exists(alert_path):
         return jsonify({'error': 'Alert data not found'}), 404
@@ -606,19 +610,19 @@ def api_all_data():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Trip updates
-    trip_update_path = os.path.join(current_dir, 'TripUpdate.pb')
+    trip_update_path = os.path.join(current_dir, 'data/gtfs_rt', 'TripUpdate.pb')
     trip_update_feed = get_gtfs_rt_feed('trip_update')
     trip_updates = process_trip_updates(trip_update_feed) if trip_update_feed else None
     trip_stats = get_trip_update_stats(trip_updates) if trip_updates else None
     
     # Vehicle positions
-    vehicle_position_path = os.path.join(current_dir, 'VehiclePosition.pb')
+    vehicle_position_path = os.path.join(current_dir, 'data/gtfs_rt', 'VehiclePosition.pb')
     vehicle_position_feed = get_gtfs_rt_feed('vehicle_position')
     vehicle_positions = process_vehicle_positions(vehicle_position_feed) if vehicle_position_feed else None
     vehicle_stats = get_vehicle_stats(vehicle_positions) if vehicle_positions else None
     
     # Alerts
-    alert_path = os.path.join(current_dir, 'Alert.pb')
+    alert_path = os.path.join(current_dir, 'data/gtfs_rt', 'Alert.pb')
     alert_feed = get_gtfs_rt_feed('alert')
     alerts = process_alerts(alert_feed) if alert_feed else None
     
@@ -664,6 +668,11 @@ if __name__ == '__main__':
     charts_dir = os.path.join('static', 'charts')
     if not os.path.exists(charts_dir):
         os.makedirs(charts_dir)
+        
+    # Create GTFS-RT directory if it doesn't exist
+    gtfs_rt_dir = os.path.join('data', 'gtfs_rt')
+    if not os.path.exists(gtfs_rt_dir):
+        os.makedirs(gtfs_rt_dir)
         
     # Run the app
     app.run(debug=True)
