@@ -48,7 +48,7 @@ temp/
 # GTFS-RT data files
 data/gtfs_rt/*.pb
 
-static/delay_chart.png
+static/charts/delay_chart.png
 
 # OS specific
 .DS_Store

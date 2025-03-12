@@ -290,7 +290,7 @@ def generate_delay_chart(trip_updates):
     plt.tight_layout()
     
     # Save the chart to a file
-    chart_path = os.path.join('static', 'delay_chart.png')
+    chart_path = os.path.join('static', 'charts', 'delay_chart.png')
     plt.savefig(chart_path)
     plt.close()
     
