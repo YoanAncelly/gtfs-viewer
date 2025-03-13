@@ -83,6 +83,12 @@ body {
 }
 
 /* Vehicle Markers */
+.vehicle-marker-container {
+    background: none !important;
+    /* Ajouter un filtre d'ombre pour l'ensemble du marqueur */
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.7));
+}
+
 .vehicle-marker {
     width: 100%;
     height: 100%;
@@ -95,16 +101,41 @@ body {
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.vehicle-marker-container {
-    background: none !important;
+    position: relative;
 }
 
 .vehicle-marker .route-short-name {
     font-size: 12px;
     font-weight: bold;
     line-height: 1;
+    z-index: 2;
+}
+
+/* Direction indicator styles */
+.direction-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Assurez-vous que le conteneur ne perturbe pas la mise en page */
+    pointer-events: none;
+}
+
+.direction-indicator {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 12px solid white;
+    /* Positionnement de la flèche au bord du cercle */
+    top: -12px;
+    left: 50%;
+    margin-left: -6px;
+    /* Ajouter un contour noir à la flèche avec text-shadow */
+    filter: drop-shadow(0 0 1px black);
 }
 
 .vehicle-marker.stopped {

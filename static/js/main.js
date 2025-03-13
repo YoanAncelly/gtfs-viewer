@@ -526,10 +526,16 @@ function updateVehicleMarkers(vehicles, routeFilter, statusFilter) {
         const routeColor = vehicle.route_color ? `#${vehicle.route_color}` : '#CCCCCC';
         const textColor = vehicle.route_text_color ? `#${vehicle.route_text_color}` : '#FFFFFF';
         
-        // Create marker with route color and short name
+        // Get bearing angle for direction indicator
+        const bearing = vehicle.bearing || 0;
+        
+        // Create marker with route color, short name and direction indicator
         const markerHtml = `
             <div class="vehicle-marker ${markerClass}" style="background-color: ${routeColor}; color: ${textColor};">
                 <span class="route-short-name">${vehicle.route_short_name || ''}</span>
+                <div class="direction-container" style="transform: rotate(${bearing}deg);">
+                    <div class="direction-indicator"></div>
+                </div>
             </div>
         `;
         
