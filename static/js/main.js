@@ -513,17 +513,23 @@ function updateVehicleMarkers(vehicles, routeFilter, statusFilter) {
     // Add new markers
     for (const vehicle of vehicles) {
         // Skip if no position data
-        if (!vehicle.latitude || !vehicle.longitude) return;
+        if (!vehicle.latitude || !vehicle.longitude) continue;
         
         // Apply filters
-        if (routeFilter !== 'all' && vehicle.route_id !== routeFilter) return;
-        if (statusFilter !== 'all' && vehicle.current_status !== statusFilter) return;
+        if (routeFilter !== 'all' && vehicle.route_id !== routeFilter) continue;
+        if (statusFilter !== 'all' && vehicle.current_status !== statusFilter) continue;
         
         // Create marker
         const markerClass = getMarkerClass(vehicle.current_status);
+        
+        // Get route color or use a default if not available
+        const routeColor = vehicle.route_color ? `#${vehicle.route_color}` : '#CCCCCC';
+        const textColor = vehicle.route_text_color ? `#${vehicle.route_text_color}` : '#FFFFFF';
+        
+        // Create marker with route color and short name
         const markerHtml = `
-            <div class="vehicle-marker ${markerClass}">
-                <i class="fas fa-bus"></i>
+            <div class="vehicle-marker ${markerClass}" style="background-color: ${routeColor}; color: ${textColor};">
+                <span class="route-short-name">${vehicle.route_short_name || ''}</span>
             </div>
         `;
         
@@ -534,12 +540,13 @@ function updateVehicleMarkers(vehicles, routeFilter, statusFilter) {
             iconAnchor: [15, 15]
         });
         
-        // Create popup content
+        // Create popup content with route_long_name
         const popupContent = `
             <div class="vehicle-popup">
                 <h6>Véhicule ${vehicle.vehicle_id}</h6>
+                <p><strong>Ligne:</strong> <span style="color: ${routeColor}; font-weight: bold;">${vehicle.route_short_name || ''}</span> ${vehicle.route_long_name || ''}</p>
                 <p><strong>Trajet:</strong> ${vehicle.trip_id}</p>
-                <p><strong>Route:</strong> ${vehicle.route_id}</p>
+                <p><strong>Route ID:</strong> ${vehicle.route_id}</p>
                 <p><strong>Position:</strong> ${vehicle.latitude.toFixed(5)}, ${vehicle.longitude.toFixed(5)}</p>
                 <p><strong>Vitesse:</strong> ${vehicle.speed ? `${vehicle.speed.toFixed(2)} m/s` : 'N/A'}</p>
                 <p><strong>Direction:</strong> ${vehicle.bearing ? `${vehicle.bearing.toFixed(2)}°` : 'N/A'}</p>

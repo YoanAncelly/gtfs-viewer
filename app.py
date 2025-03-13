@@ -162,6 +162,9 @@ def process_vehicle_positions(feed):
     if not feed:
         return None
     
+    # Load routes data
+    routes_data = load_routes_data()
+    
     vehicle_positions = []
     for entity in feed.entity:
         if entity.HasField('vehicle'):
@@ -182,19 +185,48 @@ def process_vehicle_positions(feed):
             # Format timestamp
             timestamp = datetime.fromtimestamp(vehicle.timestamp).strftime('%Y-%m-%d %H:%M:%S') if vehicle.HasField('timestamp') else None
             
+            # Add route information if available
+            route_info = routes_data.get(route_id, {})
+            
             vehicle_positions.append({
-                'vehicle_id': vehicle_id,
-                'trip_id': trip_id,
-                'route_id': route_id,
-                'latitude': latitude,
-                'longitude': longitude,
-                'bearing': bearing,
-                'speed': speed,
-                'current_status': current_status,
-                'timestamp': timestamp
+                "vehicle_id": vehicle_id,
+                "trip_id": trip_id,
+                "route_id": route_id,
+                "latitude": latitude,
+                "longitude": longitude,
+                "bearing": bearing,
+                "speed": speed,
+                "current_status": current_status,
+                "timestamp": timestamp,
+                "route_short_name": route_info.get("route_short_name", ""),
+                "route_long_name": route_info.get("route_long_name", ""),
+                "route_color": route_info.get("route_color", ""),
+                "route_text_color": route_info.get("route_text_color", "")
             })
     
     return vehicle_positions
+
+# Load routes data from CSV
+def load_routes_data():
+    routes_path = 'data/gtfs/routes.csv'
+    if not os.path.exists(routes_path):
+        print(f"Warning: Routes file not found: {routes_path}")
+        return {}
+    
+    try:
+        routes_df = pd.read_csv(routes_path)
+        routes_dict = {}
+        for _, row in routes_df.iterrows():
+            routes_dict[row['route_id']] = {
+                'route_short_name': row['route_short_name'] if 'route_short_name' in row and pd.notna(row['route_short_name']) else '',
+                'route_long_name': row['route_long_name'] if 'route_long_name' in row and pd.notna(row['route_long_name']) else '',
+                'route_color': row['route_color'] if 'route_color' in row and pd.notna(row['route_color']) else '',
+                'route_text_color': row['route_text_color'] if 'route_text_color' in row and pd.notna(row['route_text_color']) else ''
+            }
+        return routes_dict
+    except Exception as e:
+        print(f"Error loading routes data: {e}")
+        return {}
 
 # Process alerts
 def process_alerts(feed):
