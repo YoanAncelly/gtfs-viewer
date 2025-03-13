@@ -15,7 +15,7 @@ let vehiclePositionsTable = null;
 let configData = null;
 
 // Initialize the application when the document is ready
-$(document).ready(function() {
+$(document).ready(() => {
     // Initialize the maps
     initializeMaps();
     
@@ -120,7 +120,7 @@ function initializeTables() {
             }
         },
         responsive: true,
-        createdRow: function(row, data, dataIndex) {
+        createdRow: (row, data, dataIndex) => {
             // Add color based on status
             $(row).addClass(getMarkerClass(data.current_status));
         }
@@ -140,7 +140,7 @@ function setupNavigation() {
         
         // Hide all sections and show the target section
         $('.section').removeClass('active');
-        $('#' + targetSection).addClass('active');
+        $(`#${targetSection}`).addClass('active');
         
         // Update active nav link
         $('.nav-link').removeClass('active');
@@ -148,7 +148,7 @@ function setupNavigation() {
         
         // Refresh maps if needed
         if (targetSection === 'dashboard' || targetSection === 'vehicle-positions') {
-            setTimeout(function() {
+            setTimeout(() => {
                 map.invalidateSize();
                 vehicleMap.invalidateSize();
             }, 100);
@@ -158,7 +158,7 @@ function setupNavigation() {
     // Handle section links
     $('a[data-section]').click(function(e) {
         e.preventDefault();
-        $('.nav-link[data-section="' + $(this).data('section') + '"]').click();
+        $(`.nav-link[data-section="${$(this).data('section')}"]`).click();
     });
 }
 
@@ -199,11 +199,11 @@ function loadConfig() {
         url: '/api/config',
         method: 'GET',
         dataType: 'json',
-        success: function(response) {
+        success: (response) => {
             configData = response;
             updateConfigInfo();
         },
-        error: function(xhr, status, error) {
+        error: (xhr, status, error) => {
             console.error('Error loading configuration:', error);
         }
     });
@@ -218,11 +218,7 @@ function updateConfigInfo() {
     const currentSource = configData.sources[configData.current_source];
     
     // Add source info to the dashboard
-    const sourceInfo = $('<div class="alert alert-info mt-3">' +
-        '<strong>Source actuelle:</strong> ' + currentSource.name +
-        ' <button id="refresh-data" class="btn btn-sm btn-outline-primary ms-2"><i class="fas fa-sync-alt"></i> Rafraîchir</button>' +
-        ' <a href="/config" class="btn btn-sm btn-outline-secondary ms-2"><i class="fas fa-cog"></i> Configuration</a>' +
-        '</div>');
+    const sourceInfo = $(`<div class="alert alert-info mt-3"><strong>Source actuelle:</strong> ${currentSource.name} <button id="refresh-data" class="btn btn-sm btn-outline-primary ms-2"><i class="fas fa-sync-alt"></i> Rafraîchir</button> <a href="/config" class="btn btn-sm btn-outline-secondary ms-2"><i class="fas fa-cog"></i> Configuration</a></div>`);
     
     // Check if the source info already exists
     if ($('#source-info').length === 0) {
@@ -234,7 +230,7 @@ function updateConfigInfo() {
     }
     
     // Re-attach click handler
-    $('#refresh-data').click(function() {
+    $('#refresh-data').click(() => {
         refreshData();
     });
 }
@@ -254,7 +250,7 @@ function refreshData() {
         contentType: 'application/json',
         data: JSON.stringify({}),
         dataType: 'json',
-        success: function(response) {
+        success: (response) => {
             if (response.success) {
                 // Reload all data
                 loadAllData();
@@ -262,12 +258,12 @@ function refreshData() {
                 // Show success message
                 showNotification('success', 'Données rafraîchies avec succès');
             } else {
-                showNotification('danger', 'Erreur lors du rafraîchissement des données: ' + (response.error || 'Erreur inconnue'));
+                showNotification('danger', `Erreur lors du rafraîchissement des données: ${response.error || 'Erreur inconnue'}`);
             }
             refreshBtn.html(originalHtml).prop('disabled', false);
         },
-        error: function(xhr, status, error) {
-            showNotification('danger', 'Erreur lors du rafraîchissement des données: ' + error);
+        error: (xhr, status, error) => {
+            showNotification('danger', `Erreur lors du rafraîchissement des données: ${error}`);
             refreshBtn.html(originalHtml).prop('disabled', false);
         }
     });
@@ -281,17 +277,17 @@ function loadAllData() {
         url: '/api/all-data',
         method: 'GET',
         dataType: 'json',
-        success: function(response) {
+        success: (response) => {
             // Store the data
-            if (response.trip_updates && response.trip_updates.data) {
+            if (response.trip_updates?.data) {
                 tripUpdatesData = response.trip_updates.data;
             }
             
-            if (response.vehicle_positions && response.vehicle_positions.data) {
+            if (response.vehicle_positions?.data) {
                 vehiclePositionsData = response.vehicle_positions.data;
             }
             
-            if (response.alerts && response.alerts.data) {
+            if (response.alerts?.data) {
                 alertsData = response.alerts.data;
             }
             
@@ -311,9 +307,9 @@ function loadAllData() {
             // Update route filter options
             updateRouteFilterOptions(vehiclePositionsData);
         },
-        error: function(xhr, status, error) {
+        error: (xhr, status, error) => {
             console.error('Error loading data:', error);
-            showNotification('danger', 'Erreur lors du chargement des données: ' + error);
+            showNotification('danger', `Erreur lors du chargement des données: ${error}`);
         }
     });
 }
@@ -339,15 +335,15 @@ function updateTimestamps(data) {
     $('.last-update').text(formattedTime);
     
     // Update feed timestamps if available
-    if (data.trip_updates && data.trip_updates.header && data.trip_updates.header.timestamp_formatted) {
+    if (data.trip_updates?.header?.timestamp_formatted) {
         $('#trip-update-timestamp').text(data.trip_updates.header.timestamp_formatted);
     }
     
-    if (data.vehicle_positions && data.vehicle_positions.header && data.vehicle_positions.header.timestamp_formatted) {
+    if (data.vehicle_positions?.header?.timestamp_formatted) {
         $('#vehicle-position-timestamp').text(data.vehicle_positions.header.timestamp_formatted);
     }
     
-    if (data.alerts && data.alerts.header && data.alerts.header.timestamp_formatted) {
+    if (data.alerts?.header?.timestamp_formatted) {
         $('#alert-timestamp').text(data.alerts.header.timestamp_formatted);
     }
 }
@@ -363,20 +359,20 @@ function updateTripUpdatesUI(tripUpdates) {
     $('#trip-count').text(tripUpdates.data.length);
     
     if (tripUpdates.stats) {
-        $('#avg-delay').text(tripUpdates.stats.avg_delay_minutes + ' min');
-        $('#max-delay').text(tripUpdates.stats.max_delay_minutes + ' min');
+        $('#avg-delay').text(`${tripUpdates.stats.avg_delay_minutes} min`);
+        $('#max-delay').text(`${tripUpdates.stats.max_delay_minutes} min`);
         
         // Update trip updates section stats
         $('#trip-update-count').text(tripUpdates.stats.count);
-        $('#trip-avg-delay').text(tripUpdates.stats.avg_delay_minutes + ' min');
-        $('#trip-max-delay').text(tripUpdates.stats.max_delay_minutes + ' min');
-        $('#trip-min-delay').text(tripUpdates.stats.min_delay_minutes + ' min');
+        $('#trip-avg-delay').text(`${tripUpdates.stats.avg_delay_minutes} min`);
+        $('#trip-max-delay').text(`${tripUpdates.stats.max_delay_minutes} min`);
+        $('#trip-min-delay').text(`${tripUpdates.stats.min_delay_minutes} min`);
     }
     
     // Update delay chart
     if (tripUpdates.chart) {
-        $('#delay-chart').attr('src', '/static/' + tripUpdates.chart + '?t=' + new Date().getTime());
-        $('#trip-delay-chart').attr('src', '/static/' + tripUpdates.chart + '?t=' + new Date().getTime());
+        $('#delay-chart').attr('src', `/static/${tripUpdates.chart}?t=${new Date().getTime()}`);
+        $('#trip-delay-chart').attr('src', `/static/${tripUpdates.chart}?t=${new Date().getTime()}`);
     }
     
     // Update trip updates table
@@ -396,14 +392,14 @@ function updateVehiclePositionsUI(vehiclePositions) {
     $('#vehicle-count').text(vehiclePositions.data.length);
     
     if (vehiclePositions.stats) {
-        $('#avg-speed').text(vehiclePositions.stats.avg_speed ? vehiclePositions.stats.avg_speed + ' m/s' : 'N/A');
-        $('#max-speed').text(vehiclePositions.stats.max_speed ? vehiclePositions.stats.max_speed + ' m/s' : 'N/A');
+        $('#avg-speed').text(vehiclePositions.stats.avg_speed ? `${vehiclePositions.stats.avg_speed} m/s` : 'N/A');
+        $('#max-speed').text(vehiclePositions.stats.max_speed ? `${vehiclePositions.stats.max_speed} m/s` : 'N/A');
         
         // Update vehicle positions section stats
         $('#vehicle-position-count').text(vehiclePositions.stats.count);
-        $('#vehicle-avg-speed').text(vehiclePositions.stats.avg_speed ? vehiclePositions.stats.avg_speed + ' m/s' : 'N/A');
-        $('#vehicle-max-speed').text(vehiclePositions.stats.max_speed ? vehiclePositions.stats.max_speed + ' m/s' : 'N/A');
-        $('#vehicle-min-speed').text(vehiclePositions.stats.min_speed ? vehiclePositions.stats.min_speed + ' m/s' : 'N/A');
+        $('#vehicle-avg-speed').text(vehiclePositions.stats.avg_speed ? `${vehiclePositions.stats.avg_speed} m/s` : 'N/A');
+        $('#vehicle-max-speed').text(vehiclePositions.stats.max_speed ? `${vehiclePositions.stats.max_speed} m/s` : 'N/A');
+        $('#vehicle-min-speed').text(vehiclePositions.stats.min_speed ? `${vehiclePositions.stats.min_speed} m/s` : 'N/A');
     }
     
     // Update vehicle positions table
@@ -449,30 +445,28 @@ function updateAlertsUI(alerts) {
     alertsContainer.empty();
     
     if (alerts.data && alerts.data.length > 0) {
-        alerts.data.forEach(function(alert) {
+        for (const alert of alerts.data) {
             // Determine alert class based on effect
             let alertClass = 'warning';
             if (alert.effect === 'NO_SERVICE' || alert.effect === 'SIGNIFICANT_DELAYS') {
                 alertClass = 'danger';
             } else if (alert.effect === 'DETOUR' || alert.effect === 'STOP_MOVED') {
-                alertClass = 'warning';
-            } else if (alert.effect === 'ADDITIONAL_SERVICE' || alert.effect === 'MODIFIED_SERVICE') {
                 alertClass = 'info';
             }
             
-            // Create affected entities list
+            // Format affected entities
             let entitiesList = '';
             if (alert.affected_entities && alert.affected_entities.length > 0) {
                 entitiesList = '<ul class="list-group list-group-flush mt-2">';
-                alert.affected_entities.forEach(function(entity) {
-                    let entityInfo = [];
-                    if (entity.agency_id) entityInfo.push('Agence: ' + entity.agency_id);
-                    if (entity.route_id) entityInfo.push('Route: ' + entity.route_id);
-                    if (entity.trip_id) entityInfo.push('Trajet: ' + entity.trip_id);
-                    if (entity.stop_id) entityInfo.push('Arrêt: ' + entity.stop_id);
+                for (const entity of alert.affected_entities) {
+                    const entityInfo = [];
+                    if (entity.agency_id) entityInfo.push(`Agence: ${entity.agency_id}`);
+                    if (entity.route_id) entityInfo.push(`Route: ${entity.route_id}`);
+                    if (entity.trip_id) entityInfo.push(`Trajet: ${entity.trip_id}`);
+                    if (entity.stop_id) entityInfo.push(`Arrêt: ${entity.stop_id}`);
                     
-                    entitiesList += '<li class="list-group-item">' + entityInfo.join(', ') + '</li>';
-                });
+                    entitiesList += `<li class="list-group-item">${entityInfo.join(', ')}</li>`;
+                }
                 entitiesList += '</ul>';
             }
             
@@ -494,7 +488,7 @@ function updateAlertsUI(alerts) {
             `);
             
             alertsContainer.append(alertCard);
-        });
+        }
     } else {
         alertsContainer.html('<div class="col-12"><div class="alert alert-info">Aucune alerte active</div></div>');
     }
@@ -510,14 +504,14 @@ function updateVehicleMarkers(vehicles, routeFilter, statusFilter) {
     if (!vehicles) return;
     
     // Clear existing markers
-    vehicleMarkers.forEach(function(marker) {
+    for (const marker of vehicleMarkers) {
         map.removeLayer(marker);
         vehicleMap.removeLayer(marker);
-    });
+    }
     vehicleMarkers = [];
     
     // Add new markers
-    vehicles.forEach(function(vehicle) {
+    for (const vehicle of vehicles) {
         // Skip if no position data
         if (!vehicle.latitude || !vehicle.longitude) return;
         
@@ -547,8 +541,8 @@ function updateVehicleMarkers(vehicles, routeFilter, statusFilter) {
                 <p><strong>Trajet:</strong> ${vehicle.trip_id}</p>
                 <p><strong>Route:</strong> ${vehicle.route_id}</p>
                 <p><strong>Position:</strong> ${vehicle.latitude.toFixed(5)}, ${vehicle.longitude.toFixed(5)}</p>
-                <p><strong>Vitesse:</strong> ${vehicle.speed ? vehicle.speed.toFixed(2) + ' m/s' : 'N/A'}</p>
-                <p><strong>Direction:</strong> ${vehicle.bearing ? vehicle.bearing.toFixed(2) + '°' : 'N/A'}</p>
+                <p><strong>Vitesse:</strong> ${vehicle.speed ? `${vehicle.speed.toFixed(2)} m/s` : 'N/A'}</p>
+                <p><strong>Direction:</strong> ${vehicle.bearing ? `${vehicle.bearing.toFixed(2)}°` : 'N/A'}</p>
                 <p><strong>Statut:</strong> ${getStatusText(vehicle.current_status)}</p>
                 <p><strong>Horodatage:</strong> ${vehicle.timestamp || 'N/A'}</p>
             </div>
@@ -567,7 +561,7 @@ function updateVehicleMarkers(vehicles, routeFilter, statusFilter) {
         // Store markers
         vehicleMarkers.push(marker);
         vehicleMarkers.push(markerCopy);
-    });
+    }
     
     // Fit bounds if there are markers
     if (vehicleMarkers.length > 0) {
@@ -610,11 +604,11 @@ function updateRouteFilterOptions(vehicles) {
     
     // Get unique route IDs
     const routeIds = [];
-    vehicles.forEach(function(vehicle) {
+    for (const vehicle of vehicles) {
         if (vehicle.route_id && !routeIds.includes(vehicle.route_id)) {
             routeIds.push(vehicle.route_id);
         }
-    });
+    }
     
     // Sort route IDs
     routeIds.sort();
@@ -630,9 +624,9 @@ function updateRouteFilterOptions(vehicles) {
     routeFilter.append('<option value="all">Toutes les routes</option>');
     
     // Add route options
-    routeIds.forEach(function(routeId) {
+    for (const routeId of routeIds) {
         routeFilter.append(`<option value="${routeId}">${routeId}</option>`);
-    });
+    }
     
     // Restore selection if possible
     if (currentSelection && (currentSelection === 'all' || routeIds.includes(currentSelection))) {
@@ -665,7 +659,7 @@ function showNotification(type, message) {
     notificationContainer.append(notification);
 
     // Auto-dismiss after 5 seconds
-    setTimeout(function() {
+    setTimeout(() => {
         notification.alert('close');
     }, 5000);
 }
